@@ -44,6 +44,8 @@ struct MixedMediaFeedLinksView: View {
     let paddingH = selectedTheme.postLinks.theme.outerHPadding
     let paddingV = selectedTheme.postLinks.spacing / (isThereDivider ? 4 : 2)
     
+    let horCommentsPadding = selectedTheme.comments.theme.outerHPadding
+    
     ForEach(Array(mixedMediaLinks.enumerated()), id: \.self.element.hashValue) { i, item in
       VStack(spacing: 0) {
         switch item {
@@ -92,6 +94,8 @@ struct MixedMediaFeedLinksView: View {
           .padding(.bottom, 10)
           .themedListRowBG()
           .mask(RoundedRectangle(cornerRadius: 20, style: .continuous))
+          .listRowBackground(Color.clear)
+          .listRowInsets(EdgeInsets(top: 0, leading: horCommentsPadding, bottom: 0, trailing: horCommentsPadding))
         }
       }
       .onAppear {
