@@ -23,6 +23,7 @@ extension Subreddit {
   }
   
   convenience init(id: String) {
+    print("called with id: \(id)")
     self.init(id: id, typePrefix: "\(Subreddit.prefix)_")
     self.winstonData = SubredditWinstonData()
   }
@@ -139,7 +140,7 @@ extension Subreddit {
   }
   
   func refreshSubreddit() async {
-    if let data = (await RedditAPI.shared.fetchSub(data?.display_name ?? id))?.data {
+    if let data = (await RedditAPI.shared.fetchSub(data?.display_name ?? id))?.data, id != savedKeyword {
       await MainActor.run {
         withAnimation {
           self.data = data
@@ -182,7 +183,7 @@ extension Subreddit {
   
   func fetchSavedMixedMedia(after: String? = nil, searchText: String? = nil, contentWidth: CGFloat = .screenW) async -> [Either<Post, Comment>]? {
     // saved feed is a mix of posts and comments - logic needs to be handled separately
-    if let savedMediaData = await RedditAPI.shared.fetchSavedPosts("saved", after: after, searchText: searchText) {
+    if let savedMediaData = await RedditAPI.shared.fetchSavedPosts(savedKeyword, after: after, searchText: searchText) {
       await MainActor.run {
         self.loading = false
       }

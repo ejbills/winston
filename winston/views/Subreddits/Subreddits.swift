@@ -74,7 +74,7 @@ struct Subreddits: View, Equatable {
               }
               
               ListBigBtn(selectedSub: $selectedSub, icon: "bookmark.circle.fill", iconColor: .green, label: "Saved") {
-                selectedSub = .reddit(.subFeed(Subreddit(id: "saved")))
+                selectedSub = .reddit(.subFeed(Subreddit(id: savedKeyword)))
               }
             }
           }

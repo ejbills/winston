@@ -133,7 +133,7 @@ struct SubredditPosts: View, Equatable {
       loading = true
     }
     
-    if subreddit.id != "saved" {
+    if subreddit.id != savedKeyword {
       if let result = await subreddit.fetchPosts(sort: sort, after: loadMore ? lastPostAfter : nil, searchText: searchText, contentWidth: contentWidth), let newPosts = result.0 {
         Task(priority: .background) { await RedditAPI.shared.updatePostsWithAvatar(posts: newPosts, avatarSize: selectedTheme.postLinks.theme.badge.avatar.size) }
         withAnimation {
@@ -257,7 +257,7 @@ struct SubredditPosts: View, Equatable {
     }
     .onAppear {
       if !hasViewLoaded {
-        isSavedSubreddit = subreddit.id == "saved" // detect unique saved subreddit (saved posts and comments require unique logic)
+        isSavedSubreddit = subreddit.id == savedKeyword // detect unique saved subreddit (saved posts and comments require unique logic)
         hasViewLoaded = true
       }
     }
@@ -292,7 +292,7 @@ struct SubredditPosts: View, Equatable {
     .refreshable {
       clearAndLoadData(forceRefresh: true)
     }
-    .navigationTitle("\(isFeedsAndSuch ? subreddit.id.capitalized : "r/\(subreddit.data?.display_name ?? subreddit.id)")")
+    .navigationTitle("\(isFeedsAndSuch ? (subreddit.id == savedKeyword ? "Saved" : subreddit.id.capitalized) : "r/\(subreddit.data?.display_name ?? subreddit.id)")")
     .task(priority: .background) {
       if posts.data.count == 0 && (savedMixedMediaLinks?.count == 0 || savedMixedMediaLinks == nil) {
         do {
@@ -373,7 +373,7 @@ struct SubredditPostsNavBtns: View, Equatable {
           .foregroundColor(Color.accentColor)
           .fontSize(17, .bold)
       }
-      .disabled(subreddit.id == "saved")
+      .disabled(subreddit.id == savedKeyword)
       
       if let data = subreddit.data {
         Button {
